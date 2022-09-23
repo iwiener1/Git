@@ -9,7 +9,7 @@ public class CommitNode {
 	private CommitNode child;
 	
 	
-	public CommitNode (String pTree, String summary, String author, String date) {
+	public CommitNode (String summary, String author, String date) {
 		this.pTree = pTree;
 		this.summary = summary;
 		this.author = author;

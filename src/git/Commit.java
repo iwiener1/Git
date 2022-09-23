@@ -1,8 +1,7 @@
 package git;
+import java.util.*;
+import java.io.*;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -11,16 +10,30 @@ import java.util.LinkedList;
 public class Commit {
 	private CommitNode node;
 	
-	public Commit (CommitNode parent, String pTree, String summary, String author, String date) {
-		CommitNode newNode = new CommitNode (pTree, summary, author, date);
+	public Commit (CommitNode parent, String summary, String author) {
+		CommitNode newNode = new CommitNode (summary, author, getDate());
 		if (parent != null) {
 			parent.setChild(newNode);
 			newNode.setParent(parent);
 		}
 		node = newNode;
+		ArrayList<String> indexBlobs = getBlobsFromIndex();
+		TreeObject cTree = new TreeObject(indexBlobs);
 		
 		String sha = Commit.encryptThisString("" + summary + "" + date + "" + author + "" + parent);
 		
+	}
+	
+	//Gets the blobs from the index as an ArrayList of Strings, with each entry in the form: "blob: <sha1> <fileName>" 	
+	private ArrayList<String> getBlobsFromIndex() throws FileNotFoundException{
+		Scanner indexScanner = new Scanner(new File("index.txt"));
+		ArrayList<String> indexBlobs = new ArrayList<String>();
+		while (indexScanner.hasNextLine()) {
+			String indexEntry = "blob: ";
+			indexEntry+=indexScanner.nextLine();
+			indexBlobs.add(indexEntry);
+		}
+		return indexBlobs;
 	}
 	
 	public String getDate () {
