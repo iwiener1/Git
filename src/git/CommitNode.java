@@ -34,6 +34,10 @@ public class CommitNode {
 		return date;
 	}
 	
+	public String getSha1() {
+		return sha1;
+	}
+	
 	public void setParent (CommitNode parent) {
 		this.parent = parent;
 	}
@@ -49,4 +53,5 @@ public class CommitNode {
 	public CommitNode getChild () {
 		return child;
 	}
+	
 }

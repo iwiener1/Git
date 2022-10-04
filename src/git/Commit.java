@@ -47,7 +47,8 @@ public class Commit {
 	}
 	
 	public String getDate () {
-		return Commit.encryptThisString(node.getDate());
+		Date currentDate = new Date();
+		return currentDate.toString();
 	}
 	
 	public CommitNode getNode () {
@@ -66,7 +67,7 @@ public class Commit {
 		fileString.append ("" + node.getAuthor() + "\n");
 		fileString.append("" + node.getDate () + "\n");
 		fileString.append("" + node.getSummary());
-		File newFile = new File ("Testing/objects/" + getDate());
+		File newFile = new File ("objects/" + node.getSha1());
 		FileWriter fileWritey =new FileWriter (newFile);
 		fileWritey.write(fileString.toString());
 		fileWritey.close();
