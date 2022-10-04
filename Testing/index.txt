@@ -1,2 +1,0 @@
-Testing/sample.txt : 94e66df8cd09d410c62d9e0dc59d3a884e458e05
-Testing/epic2.txt : c39cd817c8c954443121382b7f915aab251abc5e

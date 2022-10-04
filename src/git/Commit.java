@@ -10,10 +10,13 @@ import java.util.LinkedList;
 public class Commit {
 	private CommitNode node;
 	
-	public Commit (CommitNode parent, String summary, String author) throws Exception {
+	public Commit (CommitNode parent, String summary, String author, Index index) throws Exception {
 		//getting the blobs added from index and making the tree object for this commit
-		ArrayList<String> indexBlobs = getBlobsFromIndex();
-		TreeObject pTree = new TreeObject(indexBlobs);
+		ArrayList<String> indexContents = getBlobsFromIndex();
+		if (parent!=null){
+			indexContents.add("tree: "+parent.getSha1());
+		}
+		TreeObject pTree = new TreeObject(indexContents);
 		
 		String sha1 = Commit.encryptThisString("" + summary + "" + author + "" + parent);
 		//Making a new CommitNode to store the data
@@ -24,13 +27,14 @@ public class Commit {
 		}
 		node = newNode;
 		this.writeFile();
+		this.clearIndex();
 	}
 	
 	//Gets the blobs from the index as an ArrayList of Strings, with each entry in the form: "blob: <sha1> <fileName>" 	
 	//Changed index entries to be of form: " <sha1> <filename>" for east addition to ArrayList
 	private ArrayList<String> getBlobsFromIndex() throws FileNotFoundException{
 		Scanner indexScanner = new Scanner(new File("index.txt"));
-		ArrayList<String> indexBlobs = new ArrayList<String>();
+		ArrayList<String> indexContents = new ArrayList<String>();
 		//adding each blob from index
 		while (indexScanner.hasNextLine()) {
 			String indexEntry = "blob: ";
@@ -41,9 +45,9 @@ public class Commit {
 			indexEntry+=nextLine.substring(colonIndex+2);
 			indexEntry+=" ";
 			indexEntry+=nextLine.substring(0,colonIndex);
-			indexBlobs.add(indexEntry);
+			indexContents.add(indexEntry);
 		}
-		return indexBlobs;
+		return indexContents;
 	}
 	
 	public String getDate () {
@@ -61,8 +65,14 @@ public class Commit {
 		if (node.getParent() != null ) {
 			fileString.append("objects/" + node.getParent().getPTree() + "\n");
 		}
+		else {
+			fileString.append("null\n");
+		}
 		if (node.getChild() != null ) {
 			fileString.append("objects/" + node.getChild().getPTree() + "\n");
+		}
+		else {
+			fileString.append("null\n");
 		}
 		fileString.append ("" + node.getAuthor() + "\n");
 		fileString.append("" + node.getDate () + "\n");
@@ -71,6 +81,13 @@ public class Commit {
 		FileWriter fileWritey =new FileWriter (newFile);
 		fileWritey.write(fileString.toString());
 		fileWritey.close();
+	}
+	
+	public void clearIndex() throws IOException {
+		File index = new File("index.txt");
+		//Making a new FileWriter NOT in append mode to rewrite the file to be blank;
+		FileWriter deleter = new FileWriter(index, false);
+		
 	}
 	
 	 public static String encryptThisString(String input)
