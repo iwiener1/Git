@@ -10,18 +10,20 @@ import java.util.LinkedList;
 public class Commit {
 	private CommitNode node;
 	
-	public Commit (CommitNode parent, String summary, String author) {
-		CommitNode newNode = new CommitNode (summary, author, getDate());
+	public Commit (CommitNode parent, String summary, String author) throws Exception {
+		//getting the blobs added from index and making the tree object for this commit
+		ArrayList<String> indexBlobs = getBlobsFromIndex();
+		TreeObject pTree = new TreeObject(indexBlobs);
+		
+		String sha1 = Commit.encryptThisString("" + summary + "" + author + "" + parent);
+		//Making a new CommitNode to store the data
+		CommitNode newNode = new CommitNode (summary, author, getDate(), pTree.getSha1(), sha1);
 		if (parent != null) {
 			parent.setChild(newNode);
 			newNode.setParent(parent);
 		}
 		node = newNode;
-		ArrayList<String> indexBlobs = getBlobsFromIndex();
-		TreeObject cTree = new TreeObject(indexBlobs);
-		
-		String sha = Commit.encryptThisString("" + summary + "" + author + "" + parent);
-		
+		this.writeFile();
 	}
 	
 	//Gets the blobs from the index as an ArrayList of Strings, with each entry in the form: "blob: <sha1> <fileName>" 	
@@ -29,9 +31,16 @@ public class Commit {
 	private ArrayList<String> getBlobsFromIndex() throws FileNotFoundException{
 		Scanner indexScanner = new Scanner(new File("index.txt"));
 		ArrayList<String> indexBlobs = new ArrayList<String>();
+		//adding each blob from index
 		while (indexScanner.hasNextLine()) {
 			String indexEntry = "blob: ";
-			indexEntry+=indexScanner.nextLine();
+			String nextLine = indexScanner.nextLine();
+			int colonIndex = nextLine.indexOf(":");
+			
+			//adding the sha1 and then the fileName
+			indexEntry+=nextLine.substring(colonIndex+2);
+			indexEntry+=" ";
+			indexEntry+=nextLine.substring(0,colonIndex);
 			indexBlobs.add(indexEntry);
 		}
 		return indexBlobs;

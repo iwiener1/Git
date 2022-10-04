@@ -7,13 +7,15 @@ public class CommitNode {
 	private String date;
 	private CommitNode parent;
 	private CommitNode child;
+	private String sha1;
 	
 	
-	public CommitNode (String summary, String author, String date) {
+	public CommitNode (String summary, String author, String date, String pTree, String sha1) {
 		this.pTree = pTree;
 		this.summary = summary;
 		this.author = author;
 		this.date = date;
+		this.sha1 = sha1;
 	}
 	
 	public String getPTree () {

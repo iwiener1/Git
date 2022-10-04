@@ -1,14 +1,19 @@
 package git;
 
-import java.io.IOException;
-
 public class CommitTester {
 
-	public static void main(String[] args) throws IOException {
-		Commit a  = new Commit (null, "a", "cool", "Henry", "9/18/22");
-		Commit b = new Commit (a.getNode(), "b", "cooler", "Henry", "9/19/22");
-		Commit c  = new Commit (b.getNode(), "c", "very cool", "Henry", "9/18/22");
+	public static void main(String[] args) throws Exception {
+		Index i = new Index();
+		i.start();
+		i.add("test.txt");
+		Commit a  = new Commit (null, "cool", "Henry");
+		
+		/**
+		i.add("test2.txt");
+		i.add("test3.txt");
+		Commit b = new Commit (a.getNode(), "cooler", "Henry");
 		b.writeFile();
+		**/
 	}
 
 }

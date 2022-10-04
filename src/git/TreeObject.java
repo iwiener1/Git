@@ -9,6 +9,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 public class TreeObject {
+	private String sha1;
+	
 	public TreeObject (ArrayList <String> blobsAndTrees) throws FileNotFoundException
 	{
 		String contents = "";
@@ -23,12 +25,16 @@ public class TreeObject {
 				contents += blobsAndTrees.get(k);
 			}
 		}
-		String sha1 = encryptThisString (contents);
+		sha1 = encryptThisString (contents);
 		new File("./objects").mkdir();
 		File sha1File = new File ("./objects/" + sha1);
 		PrintWriter printWriter = new PrintWriter (sha1File);
 		printWriter.print(contents);
 		printWriter.close();
+	}
+	
+	public String getSha1(){
+		return sha1;
 	}
 				
 	public static String encryptThisString(String input)
