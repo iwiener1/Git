@@ -42,7 +42,7 @@ public class Index {
 		Blob newBlob = new Blob (fileName);
 		blobStorage.putIfAbsent(fileName, newBlob.getSHAString()); //adding to HashMap for use later in remove
 		System.out.println (blobStorage.get(fileName)); // makes testing easier
-		newString.append(blobStorage.get(fileName) + " " + fileName + "\n");
+		newString.append(""+blobStorage.get(fileName));
 		FileWriter indexWriter = new FileWriter ("index.txt"); // assigning FileWriter to index.txt
 		indexWriter.write(newString.toString()); // after finally completing the StringBuilder, it is being written to index.txt
 		indexWriter.close();
@@ -57,7 +57,7 @@ public class Index {
 		StringBuilder newString = new StringBuilder (); // new StringBuilder will eventually replace whatever text is currently in index.txt
 		while (fileScanner.hasNextLine()) {
 			String newLine = fileScanner.nextLine();
-			if (!(newLine.substring(8 + numOfCharsInFileName).equals(fileName))) { // tests if the newLine is the one we want to remove. If it is not, it will be added to StringBuilder
+			if (!(newLine.substring(0,numOfCharsInFileName).equals(fileName))) { // tests if the newLine is the one we want to remove. If it is not, it will be added to StringBuilder
 				// thus resulting in everything but the object we want to delete being in the StringBuilder
 				newString.append(newLine);
 				newString.append("\n");
