@@ -23,6 +23,8 @@ public class Index {
 		iWriter =  new FileWriter (index);
 		File objectsFolder = new File("objects");
 		objectsFolder.mkdir();
+		File head = new File ("HEAD");
+		FileWriter headWriter =  new FileWriter (head);
 	}
 	
 	public void add (String fileName) throws IOException {

@@ -3,6 +3,9 @@ import java.util.*;
 import java.io.*;
 
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
@@ -10,23 +13,38 @@ import java.util.LinkedList;
 public class Commit {
 	private CommitNode node;
 	
-	public Commit (CommitNode parent, String summary, String author) throws Exception {
+	public Commit (String summary, String author) throws Exception {
 		//getting the blobs added from index and making the tree object for this commit
 		ArrayList<String> indexContents = getBlobsFromIndex();
-		if (parent!=null){
-			indexContents.add("tree: "+parent.getPTree());
+		Path headPath = Paths.get("HEAD");
+		String headContent = Files.readString(headPath);
+		if (headContent!=""){
+			//reading the commit from the head file and adding its tree's sha to the commit
+			Path previousPath = Paths.get(headContent);
+			String previous = Files.readString(headPath);
+			Scanner reader = new Scanner(previous);
+			indexContents.add("tree: "+ reader.nextLine());
 		}
 		TreeObject pTree = new TreeObject(indexContents);
 		
-		String sha1 = Commit.encryptThisString("" + summary + "" + author + "" + parent);
+		String sha1 = Commit.encryptThisString("" + summary + "" + author + "" + headContent);
+		
 		//Making a new CommitNode to store the data
 		CommitNode newNode = new CommitNode (summary, author, getDate(), pTree.getSha1(), sha1);
 		newNode.setCommit(this);
-		if (parent != null) {
-			parent.setChild(newNode);
-			newNode.setParent(parent);
-			parent.getCommit().writeFile();
+		
+		if (headContent != "") {
+			File headCommit = new File(headContent);
+			Scanner headReader = new Scanner(headCommit);
+			String headPointerStuff = headReader.nextLine() + headReader.nextLine();
+			headPointerStuff+=newNode.getSha1();
+			headPointerStuff += headReader.nextLine()+headReader.nextLine()+headReader.nextLine();
+			newNode.setParent(headContent);
 		}
+		
+		File head = new File("HEAD");
+		FileWriter headWriter = new FileWriter(head, false);
+		headWriter.append(this.getSha1());
 		node = newNode;
 		this.writeFile();
 		this.clearIndex();
@@ -92,6 +110,10 @@ public class Commit {
 		
 	}
 	
+	public String getSha1() {
+		return node.getSha1();
+	}
+
 	 public static String encryptThisString(String input)
 	    {
 	        try {

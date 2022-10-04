@@ -1,12 +1,18 @@
 package git;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Scanner;
+
 public class CommitNode {
 	private String pTree;
 	private String summary;
 	private String author;
 	private String date;
-	private CommitNode parent;
-	private CommitNode child;
+	private String parent;
+	private String child;
 	private String sha1;
 	private Commit commit;
 	
@@ -39,11 +45,11 @@ public class CommitNode {
 		return sha1;
 	}
 	
-	public void setParent (CommitNode parent) {
+	public void setParent (String parent) {
 		this.parent = parent;
 	}
 	
-	public void setChild (CommitNode child) {
+	public void setChild (String child) {
 		this.child = child;
 	}
 	
@@ -54,12 +60,24 @@ public class CommitNode {
 	public Commit getCommit() {
 		return commit;
 	}
-	public CommitNode getParent () {
+	public String getParent () {
 		return parent;
 	}
 	
-	public CommitNode getChild () {
+	public String getChild () {
 		return child;
 	}
 	
+	//reads the file for a commit and sets all private instance variables equal to those of the file
+	public void setToFile(String fileName) throws IOException {
+		Path filePath = Paths.get(fileName);
+		String fileContents = Files.readString(filePath);
+		Scanner reader = new Scanner(fileContents);
+		pTree = reader.nextLine();
+		parent = reader.nextLine();
+		child = reader.nextLine();
+		author = reader.nextLine();
+		date = reader.nextLine();
+		summary = reader.nextLine();
+	}
 }

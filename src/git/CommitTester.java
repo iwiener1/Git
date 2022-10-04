@@ -7,16 +7,16 @@ public class CommitTester {
 		i.start();
 		i.add("test.txt");
 		i.add("test8.txt");
-		Commit a  = new Commit (null, "cool", "Henry");
+		Commit a  = new Commit ("cool", "Henry");
 		i.add("test2.txt");
 		i.add("test3.txt");
-		Commit b = new Commit (a.getNode(), "cooler", "Henry");
+		Commit b = new Commit ("cooler", "Henry");
 		i.add("test4.txt");
 		i.add("test5.txt");
-		Commit c = new Commit (b.getNode(), "even cooler", "Isaac");
+		Commit c = new Commit ("even cooler", "Isaac");
 		i.add("test6.txt");
 		i.add("test7.txt");
-		Commit d = new Commit (c.getNode(), "coolest", "Isaac");
+		Commit d = new Commit ("coolest", "Isaac");
 	}
 
 }
