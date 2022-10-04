@@ -20,11 +20,12 @@ public class Commit {
 		ArrayList<String> indexBlobs = getBlobsFromIndex();
 		TreeObject cTree = new TreeObject(indexBlobs);
 		
-		String sha = Commit.encryptThisString("" + summary + "" + date + "" + author + "" + parent);
+		String sha = Commit.encryptThisString("" + summary + "" + author + "" + parent);
 		
 	}
 	
 	//Gets the blobs from the index as an ArrayList of Strings, with each entry in the form: "blob: <sha1> <fileName>" 	
+	//Changed index entries to be of form: " <sha1> <filename>" for east addition to ArrayList
 	private ArrayList<String> getBlobsFromIndex() throws FileNotFoundException{
 		Scanner indexScanner = new Scanner(new File("index.txt"));
 		ArrayList<String> indexBlobs = new ArrayList<String>();
