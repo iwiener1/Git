@@ -10,20 +10,22 @@ import java.util.LinkedList;
 public class Commit {
 	private CommitNode node;
 	
-	public Commit (CommitNode parent, String summary, String author, Index index) throws Exception {
+	public Commit (CommitNode parent, String summary, String author) throws Exception {
 		//getting the blobs added from index and making the tree object for this commit
 		ArrayList<String> indexContents = getBlobsFromIndex();
 		if (parent!=null){
-			indexContents.add("tree: "+parent.getSha1());
+			indexContents.add("tree: "+parent.getPTree());
 		}
 		TreeObject pTree = new TreeObject(indexContents);
 		
 		String sha1 = Commit.encryptThisString("" + summary + "" + author + "" + parent);
 		//Making a new CommitNode to store the data
 		CommitNode newNode = new CommitNode (summary, author, getDate(), pTree.getSha1(), sha1);
+		newNode.setCommit(this);
 		if (parent != null) {
 			parent.setChild(newNode);
 			newNode.setParent(parent);
+			parent.getCommit().writeFile();
 		}
 		node = newNode;
 		this.writeFile();
