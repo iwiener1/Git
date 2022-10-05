@@ -75,14 +75,28 @@ class CommitTester {
 		i.add("test.txt");
 		i.add("test8.txt");
 		Commit a  = new Commit ("cool", "Henry");
+		File aFile = new File("objects" + File.separator + a.getSha1());
+		assertTrue(aFile.exists());
+		i.add("test2.txt");
 		i.add("test3.txt");
 		Commit b = new Commit ("cooler", "Henry");
+		File bFile = new File("objects" + File.separator + b.getSha1());
+		assertTrue(bFile.exists());
 		i.add("test4.txt");
 		i.add("test5.txt");
 		Commit c = new Commit ("even cooler", "Isaac");
+		File cFile = new File("objects" + File.separator + c.getSha1());
+		assertTrue(cFile.exists());
 		i.add("test6.txt");
 		i.add("test7.txt");
 		Commit d = new Commit ("coolest", "Isaac");
+		File dFile = new File("objects" + File.separator + d.getSha1());
+		assertTrue(dFile.exists());
+	}
+	
+	private String readFile(String fileName) {
+		Path filePath = Paths.get(fileName));
+		return Files.readString(filePath);
 	}
 
 }
