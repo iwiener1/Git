@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -23,8 +27,8 @@ public class Index {
 		iWriter =  new FileWriter (index);
 		File objectsFolder = new File("objects");
 		objectsFolder.mkdir();
-		File head = new File ("HEAD");
-		FileWriter headWriter =  new FileWriter (head);
+		Path headPath = Paths.get("HEAD");
+		Files.writeString(headPath, "", StandardCharsets.ISO_8859_1);
 	}
 	
 	public void add (String fileName) throws IOException {
@@ -35,7 +39,6 @@ public class Index {
 		while (fileCopier.hasNextLine()) {
 			String newLine = fileCopier.nextLine();
 			newString.append(newLine);
-			System.out.println (newLine);
 			newString.append("\n");
 		}
 		fileCopier.close();
@@ -43,7 +46,6 @@ public class Index {
 		newString.append(fileName + " : ");
 		Blob newBlob = new Blob (fileName);
 		blobStorage.putIfAbsent(fileName, newBlob.getSHAString()); //adding to HashMap for use later in remove
-		System.out.println (blobStorage.get(fileName)); // makes testing easier
 		newString.append(""+blobStorage.get(fileName));
 		FileWriter indexWriter = new FileWriter ("index.txt"); // assigning FileWriter to index.txt
 		indexWriter.write(newString.toString()); // after finally completing the StringBuilder, it is being written to index.txt

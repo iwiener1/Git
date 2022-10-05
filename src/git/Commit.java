@@ -13,27 +13,32 @@ import java.util.LinkedList;
 public class Commit {
 	private CommitNode node;
 	
-	public Commit (CommitNode parent, String summary, String author, Index index) throws Exception {
+	public Commit (String summary, String author) throws Exception {
 		//getting the blobs added from index and making the tree object for this commit
 		ArrayList<String> indexContents = getBlobsFromIndex();
-		if (parent!=null){
-			indexContents.add("tree: "+parent.getSha1());
+		
+		String headContent = readHead();
+		if (!headContent.equals("")) {
+			indexContents.add("tree: "+headContent);
 		}
+		
 		TreeObject pTree = new TreeObject(indexContents);
 		
-		String sha1 = Commit.encryptThisString("" + summary + "" + author + "" + headContent);
+		String sha1 = Commit.encryptThisString(summary + "" + author + "" + headContent);
 		
 		//Making a new CommitNode to store the data
 		CommitNode newNode = new CommitNode (summary, author, getDate(), pTree.getSha1(), sha1);
-		if (parent != null) {
-			parent.setChild(newNode);
-			newNode.setParent(parent);
-		}
 		
+		//Changing the parent and child pointers as needed
+		if (!headContent.equals("")) {
+			setChild("objects"+File.separator+headContent, newNode.getSha1());
+			newNode.setParent(headContent);
+		}
+		node = newNode;
 		File head = new File("HEAD");
 		FileWriter headWriter = new FileWriter(head, false);
-		headWriter.append(this.getSha1());
-		node = newNode;
+		headWriter.write(this.getSha1());
+		headWriter.close();
 		this.writeFile();
 		this.clearIndex();
 	}
@@ -67,17 +72,38 @@ public class Commit {
 		return node;
 	}
 	
+	public String readHead() throws IOException {
+		Path headPath = Paths.get("HEAD");
+		return Files.readString(headPath);
+	}
+	
+	public void setChild(String parent, String child) throws IOException {
+		//constructing the new file contents for the parent
+		Path parentPath = Paths.get(parent);
+		String parentContent = Files.readString(parentPath);
+		Scanner parentReader = new Scanner(parentContent);
+		String editedParentContent = parentReader.nextLine()+"\n"+parentReader.nextLine()+"\n";
+		parentReader.nextLine();
+		editedParentContent+=child+"\n";
+		editedParentContent+=parentReader.nextLine()+"\n"+parentReader.nextLine()+"\n"+parentReader.nextLine();
+		
+		//Writing to change the parent file
+		File parentFile = new File(parent);
+		FileWriter parentWriter = new FileWriter(parentFile, false);
+		parentWriter.write(editedParentContent);
+		parentWriter.close();
+	}
 	public void writeFile () throws IOException {
 		StringBuilder fileString = new StringBuilder();
 		fileString.append ("objects/" + node.getPTree() + "\n");
-		if (node.getParent() != null ) {
-			fileString.append("objects/" + node.getParent().getPTree() + "\n");
+		if (!node.getParent().equals("")) {
+			fileString.append("objects/" + node.getParent() + "\n");
 		}
 		else {
 			fileString.append("null\n");
 		}
-		if (node.getChild() != null ) {
-			fileString.append("objects/" + node.getChild().getPTree() + "\n");
+		if (!node.getChild().equals("")) {
+			fileString.append("objects/" + node.getChild() + "\n");
 		}
 		else {
 			fileString.append("null\n");

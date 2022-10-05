@@ -11,8 +11,8 @@ public class CommitNode {
 	private String summary;
 	private String author;
 	private String date;
-	private String parent;
-	private String child;
+	private String parent = "";
+	private String child = "";
 	private String sha1;
 	
 	
@@ -52,7 +52,7 @@ public class CommitNode {
 		this.child = child;
 	}
 	
-	public CommitNode getParent () {
+	public String getParent () {
 		return parent;
 	}
 	
