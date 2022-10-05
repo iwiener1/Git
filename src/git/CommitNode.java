@@ -59,17 +59,4 @@ public class CommitNode {
 	public String getChild () {
 		return child;
 	}
-	
-	//reads the file for a commit and sets all private instance variables equal to those of the file
-	public void setToFile(String fileName) throws IOException {
-		Path filePath = Paths.get(fileName);
-		String fileContents = Files.readString(filePath);
-		Scanner reader = new Scanner(fileContents);
-		pTree = reader.nextLine();
-		parent = reader.nextLine();
-		child = reader.nextLine();
-		author = reader.nextLine();
-		date = reader.nextLine();
-		summary = reader.nextLine();
-	}
 }

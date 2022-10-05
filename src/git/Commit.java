@@ -95,15 +95,15 @@ public class Commit {
 	}
 	public void writeFile () throws IOException {
 		StringBuilder fileString = new StringBuilder();
-		fileString.append ("objects/" + node.getPTree() + "\n");
+		fileString.append (node.getPTree() + "\n");
 		if (!node.getParent().equals("")) {
-			fileString.append("objects/" + node.getParent() + "\n");
+			fileString.append(node.getParent() + "\n");
 		}
 		else {
 			fileString.append("null\n");
 		}
 		if (!node.getChild().equals("")) {
-			fileString.append("objects/" + node.getChild() + "\n");
+			fileString.append(node.getChild() + "\n");
 		}
 		else {
 			fileString.append("null\n");
