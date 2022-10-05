@@ -13,17 +13,11 @@ import java.util.LinkedList;
 public class Commit {
 	private CommitNode node;
 	
-	public Commit (String summary, String author) throws Exception {
+	public Commit (CommitNode parent, String summary, String author, Index index) throws Exception {
 		//getting the blobs added from index and making the tree object for this commit
 		ArrayList<String> indexContents = getBlobsFromIndex();
-		Path headPath = Paths.get("HEAD");
-		String headContent = Files.readString(headPath);
-		if (headContent!=""){
-			//reading the commit from the head file and adding its tree's sha to the commit
-			Path previousPath = Paths.get(headContent);
-			String previous = Files.readString(headPath);
-			Scanner reader = new Scanner(previous);
-			indexContents.add("tree: "+ reader.nextLine());
+		if (parent!=null){
+			indexContents.add("tree: "+parent.getSha1());
 		}
 		TreeObject pTree = new TreeObject(indexContents);
 		
@@ -31,15 +25,9 @@ public class Commit {
 		
 		//Making a new CommitNode to store the data
 		CommitNode newNode = new CommitNode (summary, author, getDate(), pTree.getSha1(), sha1);
-		newNode.setCommit(this);
-		
-		if (headContent != "") {
-			File headCommit = new File(headContent);
-			Scanner headReader = new Scanner(headCommit);
-			String headPointerStuff = headReader.nextLine() + headReader.nextLine();
-			headPointerStuff+=newNode.getSha1();
-			headPointerStuff += headReader.nextLine()+headReader.nextLine()+headReader.nextLine();
-			newNode.setParent(headContent);
+		if (parent != null) {
+			parent.setChild(newNode);
+			newNode.setParent(parent);
 		}
 		
 		File head = new File("HEAD");
